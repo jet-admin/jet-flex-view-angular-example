@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { getPublicApiService } from 'jet-admin-sdk';
+
+import { environment } from '../../environments/environment';
 
 @Component({
   templateUrl: './jet-test.component.html',
@@ -6,9 +9,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JetTestComponent implements OnInit {
 
-  constructor() { }
+  user = 'unknown';
 
   ngOnInit() {
+    if (!environment.production) {
+      getPublicApiService().projectsStore.setCurrent('YOUR_PROJECT_UNIQUE_NAME');
+      getPublicApiService().authService.tokenLogin('YOUR_USER_TOKEN');
+    }
+
+    getPublicApiService().currentUserStore.get(true).subscribe(result => {
+      this.user = result ? result.username : 'unknown';
+    });
   }
 
 }
